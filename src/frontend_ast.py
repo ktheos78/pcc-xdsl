@@ -90,9 +90,9 @@ class Parser:
         
         # binary operation
         if (len(tokens) > 1):
-            lhs = int(tokens[0]) if is_number(tokens[0]) else tokens[0]
+            lhs = Constant(int(tokens[0])) if is_number(tokens[0]) else Var(tokens[0])
             op = tokens[1]
-            rhs = int(tokens[2][:len(tokens[2]) - 1]) if is_number(tokens[2][:len(tokens[2]) - 1]) else tokens[2][:len(tokens[2]) - 1]
+            rhs = Constant(int(tokens[2][:len(tokens[2]) - 1])) if is_number(tokens[2][:len(tokens[2]) - 1]) else Var(tokens[2][:len(tokens[2]) - 1])
             return BinaryOp(lhs, op, rhs)
 
         # constant
@@ -142,9 +142,8 @@ class Parser:
 
                 ### Return ###
                 elif (tokens[0] == "return"):
-                    ret_val = tokens[1]
-                    if (ret_val[len(ret_val) - 1] == ';'):
-                        ret_val = ret_val[:len(ret_val) - 1]
+                    ret_val = tokens[1][:len(tokens[1]) - 1]
+                    ret_val = Constant(int(ret_val)) if is_number(ret_val) else Var(ret_val)
                     func.body.append(Ret(ret_val))
                     return func
 
@@ -157,12 +156,12 @@ class Parser:
 
             i += 1
         
-        print("Missing return value")
+        print("Warning: Missing return value")
         return func
 
 
-#p = Parser()
-#res = p.walk("main.c")
-#print()
-#print("AST:")
-#print(res)
+p = Parser()
+res = p.walk("main.c")
+print()
+print("AST:")
+print(res)
