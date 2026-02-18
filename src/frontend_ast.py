@@ -114,7 +114,7 @@ class Parser:
             tokens = line.split()
             if (len(tokens) < 2 or tokens[0][:2] == "//"): 
                 continue
-            print(tokens)
+            #print(tokens)
 
             ### Function declaration ###
             if (i == 0):
@@ -158,10 +158,3 @@ class Parser:
         
         print("Warning: Missing return value")
         return func
-
-
-p = Parser()
-res = p.walk("main.c")
-print()
-print("AST:")
-print(res)

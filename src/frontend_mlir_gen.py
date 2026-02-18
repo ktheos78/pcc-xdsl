@@ -4,7 +4,6 @@ picoC AST to high-level MLIR converter
 
 from xdsl.dialects import arith, builtin, func
 from xdsl.ir import Block, SSAValue, Region, Operation
-#from xdsl.context import MLIRContext
 
 from frontend_ast import *
 
@@ -121,12 +120,13 @@ class MLIRGenerator:
         op = func.ReturnOp(retval_ssa)
         self.current_block.add_op(op)
 
-p = Parser()
-res = p.walk("main.c")
-print()
+#p = Parser()
+#res = p.walk("main.c")
+#print("AST:")
+#print(res)
 
-gen = MLIRGenerator()
-m = gen.compile(res)
-print(m)
+#gen = MLIRGenerator()
+#m = gen.compile(res)
+#print(m)
 
     
