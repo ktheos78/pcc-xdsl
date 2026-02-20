@@ -72,7 +72,7 @@ class MLIRGenerator:
         elif (node.op == "*"):
             op = arith.MuliOp(left_val, right_val, builtin.i32)
         elif (node.op == "/"):
-            op = arith.CeilDivUIOp(left_val, right_val, builtin.i32)
+            op = arith.DivSIOp(left_val, right_val, builtin.i32)
         elif (node.op == "&"):
             op = arith.AndIOp(left_val, right_val, builtin.i32)
         elif (node.op == "|"):
@@ -119,14 +119,4 @@ class MLIRGenerator:
 
         op = func.ReturnOp(retval_ssa)
         self.current_block.add_op(op)
-
-#p = Parser()
-#res = p.walk("main.c")
-#print("AST:")
-#print(res)
-
-#gen = MLIRGenerator()
-#m = gen.compile(res)
-#print(m)
-
     
