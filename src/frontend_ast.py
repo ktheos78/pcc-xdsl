@@ -142,8 +142,7 @@ class Parser:
 
                 ### Return ###
                 elif (tokens[0] == "return"):
-                    ret_val = tokens[1][:len(tokens[1]) - 1]
-                    ret_val = Constant(int(ret_val)) if is_number(ret_val) else Var(ret_val)
+                    ret_val = self.get_expr(tokens[1:])
                     func.body.append(Ret(ret_val))
                     return func
 
