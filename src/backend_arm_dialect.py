@@ -3,14 +3,12 @@ High-level MLIR to ARM MLIR converter
 """
 
 from xdsl.dialects import arith, builtin
-from xdsl.ir import Operation, Dialect
 from xdsl.transforms.common_subexpression_elimination import cse
 from xdsl.transforms.dead_code_elimination import dce
 from xdsl.irdl import irdl_op_definition, IRDLOperation, operand_def, result_def, attr_def
 from xdsl.ir import SSAValue
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriter,
     PatternRewriteWalker,
     RewritePattern
 )
@@ -404,31 +402,3 @@ def lower(module: builtin.ModuleOp):
                                                   ])
     walker = PatternRewriteWalker(merged_pattern)
     walker.rewrite_module(module)
-
-# generate AST
-p = Parser()
-res = p.walk("test.c")
-print("AST:")
-print(res)
-print()
-
-# generate high-level MLIR from AST 
-gen = MLIRGenerator()
-modl = gen.compile(res)
-print("High-level MLIR before optimization:")
-print(modl)
-print()
-
-# apply optimizations
-apply_all_optimizations(modl)   # canonicalizations
-cse(modl)                       # common subexpression elimination
-dce(modl)                       # dead code elimination
-
-print("High-level MLIR after optimization:")
-print(modl)
-print()
-
-lower(modl)
-print("MLIR after lowering to ARM dialect:")
-print(modl)
-print()
