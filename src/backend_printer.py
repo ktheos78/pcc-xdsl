@@ -27,8 +27,11 @@ def add_ssa_id(ssa: SSAValue, dst: int):
     global ssa_ids, id
     ssa_ids[ssa] = id
 
-def print_asm(module: builtin.ModuleOp, out_file=sys.stdout):
+def print_asm(module: builtin.ModuleOp, out_file):
     
+    # redirect stdout
+    sys.stdout = out_file
+
     binary_ops = {
         ArmAddOp:   "adds",
         ArmSubOp:   "subs",
@@ -47,39 +50,39 @@ def print_asm(module: builtin.ModuleOp, out_file=sys.stdout):
             dst = get_ssa_id(op.results[0])
             lhs = get_ssa_id(op.operands[0])
             rhs = get_ssa_id(op.operands[1])
-            print(f"    {binary_ops[type(op)]} r{dst}, r{lhs}, r{rhs}", file=out_file)
+            print(f"    {binary_ops[type(op)]} r{dst}, r{lhs}, r{rhs}")
 
         elif isinstance(op, ArmMovOp):
             dst = get_ssa_id(op.results[0])
             imm = op.attributes["imm"].value.data
-            print(f"    mov r{dst}, #{imm}", file=out_file)
+            print(f"    mov r{dst}, #{imm}")
 
         elif isinstance(op, ArmMovwOp):
             dst = get_ssa_id(op.results[0])
             imm = op.attributes["imm"].value.data
-            print(f"    movw r{dst}, #{imm}", file=out_file)
+            print(f"    movw r{dst}, #{imm}")
 
         elif isinstance(op, ArmMovtOp):
             dst = get_ssa_id(op.operands[0])
             imm = op.attributes["imm"].value.data
             add_ssa_id(op.results[0], dst)
-            print(f"    movt r{dst}, #{imm}", file=out_file)
+            print(f"    movt r{dst}, #{imm}")
 
         elif isinstance(op, ArmMovRegOp):
             dst = 0
             src = get_ssa_id(op.operands[0])
-            print(f"    mov r{dst}, r{src}", file=out_file)
+            print(f"    mov r{dst}, r{src}")
 
         elif isinstance(op, ArmRetOp):
-            print("    bx lr", file=out_file)
+            print("    bx lr")
 
         elif isinstance(op, func.FuncOp):
             
             name = str(op.sym_name).replace("\"", "")
 
             # header
-            print(".syntax unified", file=out_file)
-            print(".thumb", file=out_file)
-            print(f".global {name}", file=out_file)
-            print(f".type {name}, %function\n", file=out_file)
-            print(f"{name}:", file=out_file)
+            print(".syntax unified")
+            print(".thumb")
+            print(f".global {name}")
+            print(f".type {name}, %function\n")
+            print(f"{name}:")

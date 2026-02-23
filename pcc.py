@@ -24,12 +24,13 @@ else:
 # generate AST
 p = Parser()
 ast = p.walk(in_file)
+in_filename = in_file[:len(in_file) - 2]
 
 # generate high-level MLIR from AST 
 gen = MLIRGenerator()
 module = gen.compile(ast)
 if (emit_all):
-    filename = f"{in_file[:len(in_file) - 2]}.mlir"
+    filename = f"{in_filename}.mlir"
     f = open(filename, "w+")
     print(module, file=f)
 
@@ -38,18 +39,18 @@ apply_all_optimizations(module)   # canonicalizations
 cse(module)                       # common subexpression elimination
 dce(module)                       # dead code elimination
 if (emit_all):
-    filename = f"{in_file[:len(in_file) - 2]}-optimized.mlir"
+    filename = f"{in_filename}-optimized.mlir"
     f = open(filename, "w+")
     print(module, file=f)
 
 # lower MLIR to ARM dialect
 lower(module)
 if (emit_all):
-    filename = f"{in_file[:len(in_file) - 2]}-arm.mlir"
+    filename = f"{in_filename}-arm.mlir"
     f = open(filename, "w+")
     print(module, file=f)
 
-# print assembly
-filename = f"{in_file[:len(in_file) - 2]}.s"
+# print ARM assembly
+filename = f"{in_filename}.s"
 f = open(filename, "w+")
 print_asm(module, out_file=f)
