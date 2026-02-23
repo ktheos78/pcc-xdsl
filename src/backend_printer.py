@@ -2,12 +2,11 @@
 ARM MLIR to ARM assembly converter (printer)
 """
 
+import sys
 from xdsl.dialects import builtin
+from xdsl.ir import SSAValue
 
-from frontend_ast import *
-from frontend_mlir_gen import *
-from backend_optimization import *
-from backend_arm_dialect import *
+from src.backend_arm_dialect import *
 
 ssa_ids = dict()
 id = 0
@@ -28,7 +27,7 @@ def add_ssa_id(ssa: SSAValue, dst: int):
     global ssa_ids, id
     ssa_ids[ssa] = id
 
-def print_asm(module: builtin.ModuleOp):
+def print_asm(module: builtin.ModuleOp, out_file=sys.stdout):
     
     binary_ops = {
         ArmAddOp:   "adds",
@@ -48,72 +47,39 @@ def print_asm(module: builtin.ModuleOp):
             dst = get_ssa_id(op.results[0])
             lhs = get_ssa_id(op.operands[0])
             rhs = get_ssa_id(op.operands[1])
-            print(f"    {binary_ops[type(op)]} r{dst}, r{lhs}, r{rhs}")
+            print(f"    {binary_ops[type(op)]} r{dst}, r{lhs}, r{rhs}", file=out_file)
 
         elif isinstance(op, ArmMovOp):
             dst = get_ssa_id(op.results[0])
             imm = op.attributes["imm"].value.data
-            print(f"    mov r{dst}, #{imm}")
+            print(f"    mov r{dst}, #{imm}", file=out_file)
 
         elif isinstance(op, ArmMovwOp):
             dst = get_ssa_id(op.results[0])
             imm = op.attributes["imm"].value.data
-            print(f"    movw r{dst}, #{imm}")
+            print(f"    movw r{dst}, #{imm}", file=out_file)
 
         elif isinstance(op, ArmMovtOp):
             dst = get_ssa_id(op.operands[0])
             imm = op.attributes["imm"].value.data
             add_ssa_id(op.results[0], dst)
-            print(f"    movt r{dst}, #{imm}")
+            print(f"    movt r{dst}, #{imm}", file=out_file)
 
         elif isinstance(op, ArmMovRegOp):
             dst = 0
             src = get_ssa_id(op.operands[0])
-            print(f"    mov r{dst}, r{src}")
+            print(f"    mov r{dst}, r{src}", file=out_file)
 
         elif isinstance(op, ArmRetOp):
-            print("    bx lr")
+            print("    bx lr", file=out_file)
 
         elif isinstance(op, func.FuncOp):
             
             name = str(op.sym_name).replace("\"", "")
 
             # header
-            print(".syntax unified")
-            print(".thumb")
-            print(f".global {name}")
-            print(f".type {name}, %function\n")
-            print(f"{name}:")
-    
-
-
-# generate AST
-p = Parser()
-res = p.walk("test.c")
-print("AST:")
-print(res)
-print()
-
-# generate high-level MLIR from AST 
-gen = MLIRGenerator()
-modl = gen.compile(res)
-print("High-level MLIR before optimization:")
-print(modl)
-print()
-
-# apply optimizations
-apply_all_optimizations(modl)   # canonicalizations
-cse(modl)                       # common subexpression elimination
-dce(modl)                       # dead code elimination
-
-print("High-level MLIR after optimization:")
-print(modl)
-print()
-
-lower(modl)
-print("MLIR after lowering to ARM dialect:")
-print(modl)
-print()
-
-print("Assembly code:")
-print_asm(modl)
+            print(".syntax unified", file=out_file)
+            print(".thumb", file=out_file)
+            print(f".global {name}", file=out_file)
+            print(f".type {name}, %function\n", file=out_file)
+            print(f"{name}:", file=out_file)

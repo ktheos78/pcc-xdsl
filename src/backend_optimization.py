@@ -3,21 +3,11 @@ Basic optimizer for high-level MLIR
 """
 
 from xdsl.dialects import arith, builtin
-from xdsl.ir import Operation, Dialect
-from xdsl.transforms.common_subexpression_elimination import cse
-from xdsl.transforms.dead_code_elimination import dce
-from xdsl.irdl import irdl_op_definition, IRDLOperation, operand_def, result_def
-from xdsl.ir import SSAValue
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriter,
     PatternRewriteWalker,
     RewritePattern
 )
-
-from frontend_ast import *
-from frontend_mlir_gen import *
-
 
 
 #
@@ -147,9 +137,3 @@ def apply_all_optimizations(module: builtin.ModuleOp):
                                                   XorSelfPattern()])
     walker = PatternRewriteWalker(merged_pattern)
     walker.rewrite_module(module)
-
-
-
-
-
-

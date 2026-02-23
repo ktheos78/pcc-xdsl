@@ -2,9 +2,7 @@
 High-level MLIR to ARM MLIR converter
 """
 
-from xdsl.dialects import arith, builtin
-from xdsl.transforms.common_subexpression_elimination import cse
-from xdsl.transforms.dead_code_elimination import dce
+from xdsl.dialects import arith, builtin, func
 from xdsl.irdl import irdl_op_definition, IRDLOperation, operand_def, result_def, attr_def
 from xdsl.ir import SSAValue
 from xdsl.pattern_rewriter import (
@@ -12,11 +10,6 @@ from xdsl.pattern_rewriter import (
     PatternRewriteWalker,
     RewritePattern
 )
-
-from frontend_ast import *
-from frontend_mlir_gen import *
-from backend_optimization import *
-
 
 
 #

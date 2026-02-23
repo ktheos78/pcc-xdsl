@@ -3,3 +3,7 @@ __pycache__
 src/*.c
 *.c
 *.txt
+*.mlir
+*.s
+src/*.mlir
+src/*.s
