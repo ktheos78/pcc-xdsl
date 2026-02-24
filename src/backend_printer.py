@@ -24,8 +24,8 @@ def get_ssa_id(ssa: SSAValue):
         return ret
     
 def add_ssa_id(ssa: SSAValue, dst: int):
-    global ssa_ids, id
-    ssa_ids[ssa] = id
+    global ssa_ids
+    ssa_ids[ssa] = dst
 
 def print_asm(module: builtin.ModuleOp, out_file):
     
@@ -35,7 +35,7 @@ def print_asm(module: builtin.ModuleOp, out_file):
     binary_ops = {
         ArmAddOp:   "adds",
         ArmSubOp:   "subs",
-        ArmMulOp:   "muls",
+        ArmMulOp:   "mul",
         ArmAndOp:   "ands",
         ArmOrOp:    "orrs",
         ArmEorOp:   "eors",
@@ -71,7 +71,7 @@ def print_asm(module: builtin.ModuleOp, out_file):
         elif isinstance(op, ArmMovRegOp):
             dst = 0
             src = get_ssa_id(op.operands[0])
-            print(f"    mov r{dst}, r{src}")
+            print(f"    movs r{dst}, r{src}")
 
         elif isinstance(op, ArmRetOp):
             print("    bx lr")
