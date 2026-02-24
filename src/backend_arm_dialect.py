@@ -144,6 +144,22 @@ class ArmLsrOp(IRDLOperation):
         )
 
 @irdl_op_definition
+class ArmAsrOp(IRDLOperation):
+    
+    name = "arm.asr"
+
+    # operands and result type 
+    lhs = operand_def(builtin.IntegerType)
+    rhs = operand_def(builtin.IntegerType)
+    res = result_def(builtin.IntegerType)
+
+    def __init__(self, lhs: SSAValue, rhs: SSAValue):
+        super().__init__(
+            operands=[lhs, rhs],
+            result_types=[lhs.type]
+        )
+
+@irdl_op_definition
 class ArmMovOp(IRDLOperation):
     name = "arm.mov"
 
@@ -312,7 +328,7 @@ class ArmEorLowerPattern(RewritePattern):
         lhs = op.lhs
         rhs = op.rhs
 
-        # replace arith.addi with arm.add
+        # replace arith.xori with arm.eor
         xor_op = ArmEorOp(lhs, rhs)
         rewriter.replace_op(op, [xor_op])
 
@@ -328,12 +344,28 @@ class ArmLslLowerPattern(RewritePattern):
         lhs = op.lhs
         rhs = op.rhs
 
-        # replace arith.addi with arm.add
+        # replace arith.shli with arm.lsl
         lsl_op = ArmLslOp(lhs, rhs)
         rewriter.replace_op(op, [lsl_op])
 
 # arm.lsr
 class ArmLsrLowerPattern(RewritePattern):
+
+    def match_and_rewrite(self, op, rewriter):
+        
+        # match arith.shrui
+        if not isinstance(op, arith.ShRUIOp):
+            return
+        
+        lhs = op.lhs
+        rhs = op.rhs
+
+        # replace arith.shrui with arm.lsr
+        lsr_op = ArmLsrOp(lhs, rhs)
+        rewriter.replace_op(op, [lsr_op])
+
+# arm.asr
+class ArmAsrLowerPattern(RewritePattern):
 
     def match_and_rewrite(self, op, rewriter):
         
@@ -344,8 +376,8 @@ class ArmLsrLowerPattern(RewritePattern):
         lhs = op.lhs
         rhs = op.rhs
 
-        # replace arith.addi with arm.add
-        lsr_op = ArmLsrOp(lhs, rhs)
+        # replace arith.shrsi with arm.asr
+        lsr_op = ArmAsrOp(lhs, rhs)
         rewriter.replace_op(op, [lsr_op])
 
 # arm.mov*
@@ -390,6 +422,7 @@ def lower(module: builtin.ModuleOp):
                                                   ArmEorLowerPattern(),
                                                   ArmLslLowerPattern(),
                                                   ArmLsrLowerPattern(),
+                                                  ArmAsrLowerPattern(),
                                                   ArmMovLowerPattern(),
                                                   ArmRetPattern()
                                                   ])

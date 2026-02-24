@@ -41,6 +41,7 @@ def print_asm(module: builtin.ModuleOp, out_file):
         ArmEorOp:   "eors",
         ArmLslOp:   "lsls",
         ArmLsrOp:   "lsrs",
+        ArmAsrOp:   "asrs"
     }
 
     # match type for each operation
