@@ -1,2 +1,6 @@
 .*
 __pycache__
+examples/pico/build
+examples/pico/build/*
+examples/pico/pico_sdk_import.cmake
+examples/pico/pico-sdk
