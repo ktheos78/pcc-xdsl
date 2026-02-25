@@ -6,5 +6,5 @@ export PICO_SDK_PATH="$(pwd)/pico-sdk"
 rm -rf build
 mkdir build
 
-/usr/bin/cmake -S . -B build -DPICO_BOARD=pico2
-/usr/bin/cmake --build build -j
+cmake -S . -B build -DPICO_BOARD=pico2
+cmake --build build -j
