@@ -1,10 +1,8 @@
-int example1(void) {
-    int a, b, c;
+int example1(int a, int b) {
     
-    a = 5;
-    b = 9;
-    c = a * 16;     // this gets turned into c = a << 4
-
+    int c = a * 16;     // this gets turned into c = a << 4
+    int d = c * 5;
+    b = d - a;
     return c - b;
 }
 

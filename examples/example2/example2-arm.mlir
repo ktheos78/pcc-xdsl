@@ -1,12 +1,11 @@
 builtin.module {
-  func.func @example2() -> i32 {
-    %0 = "arm.mov"() {imm = 5 : i32} : () -> i32
-    %1 = "arm.movw"() {imm = 18815 : i32} : () -> i32
-    %2 = "arm.movt"(%1) {imm = 94 : i32} : (i32) -> i32
-    %3 = "arm.mov"() {imm = 2 : i32} : () -> i32
-    %4 = "arm.asr"(%0, %3) : (i32, i32) -> i32
-    %5 = "arm.sub"(%4, %2) : (i32, i32) -> i32
-    %6 = "arm.movreg"(%5) : (i32) -> i32
+  func.func @example2(%arg0 : i32, %arg1 : i32, %arg2 : i32, %arg3 : i32) -> i32 {
+    %c617919_i32 = "arm.movw"() {imm = 28095 : i32} : () -> i32
+    %c617919_i32_1 = "arm.movt"(%c617919_i32) {imm = 9 : i32} : (i32) -> i32
+    %0 = "arm.mov"() {imm = 2 : i32} : () -> i32
+    %1 = "arm.asr"(%arg3, %0) : (i32, i32) -> i32
+    %2 = "arm.add"(%1, %c617919_i32_1) : (i32, i32) -> i32
+    %3 = "arm.movreg"(%2) : (i32) -> i32
     "arm.ret"() : () -> ()
   }
 }

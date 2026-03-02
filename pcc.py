@@ -45,7 +45,7 @@ ret = subprocess.call([cgeist_path + "/cgeist",
                        in_file, "-S", "-O0",
                        "-o", mlir_filepath])
 if ret != 0:
-    print("Error: cgeist failed to compile file " + in_file + " with exit code " + ret)
+    print("Error: cgeist failed to compile file " + in_file + " with exit code " + str(ret))
 
 # read MLIR file produced by Polygeist
 with open(mlir_filepath, "r") as f:
