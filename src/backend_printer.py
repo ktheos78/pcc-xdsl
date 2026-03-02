@@ -10,6 +10,7 @@ from src.backend_arm_dialect import *
 
 ssa_ids = dict()
 id = 0
+funcidx = 0
 
 def get_ssa_id(ssa: SSAValue):
     global ssa_ids, id
@@ -79,11 +80,24 @@ def print_asm(module: builtin.ModuleOp, out_file):
 
         elif isinstance(op, func.FuncOp):
             
+            global id, ssa_ids, funcidx
+            id = 0
+            ssa_ids = {}
+
             name = str(op.sym_name).replace("\"", "")
 
-            # header
-            print(".syntax unified")
-            print(".thumb")
-            print(f".global {name}")
-            print(f".type {name}, %function\n")
+            # declare these once
+            if funcidx == 0:
+                print(".syntax unified")
+                print(".thumb")
+                funcidx += 1
+            
+            # header for each function
+            print(f"\n.global {name}")
+            print(f".type {name}, %function")
             print(f"{name}:")
+
+            # map function args to r0, r1, ... according to ARM calling convention
+            for arg in op.body.blocks[0].args:
+                add_ssa_id(arg, id)
+                id += 1

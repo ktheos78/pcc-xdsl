@@ -3,6 +3,7 @@ High-level MLIR to ARM MLIR converter
 """
 
 from xdsl.dialects import arith, builtin, func
+from xdsl.ir import Dialect
 from xdsl.irdl import irdl_op_definition, IRDLOperation, operand_def, result_def, attr_def
 from xdsl.ir import SSAValue
 from xdsl.pattern_rewriter import (
@@ -428,3 +429,23 @@ def lower(module: builtin.ModuleOp):
                                                   ])
     walker = PatternRewriteWalker(merged_pattern)
     walker.rewrite_module(module)
+
+ArmDialect = Dialect(
+    "arm", # The namespace used in the MLIR text (e.g., %0 = "arm.add"...)
+    [
+        ArmAddOp,
+        ArmMulOp,
+        ArmMovOp,
+        ArmRetOp,
+        ArmSubOp,
+        ArmAndOp,
+        ArmEorOp,
+        ArmOrOp,
+        ArmLslOp,
+        ArmLsrOp,
+        ArmAsrOp,
+        ArmMovwOp,
+        ArmMovtOp,
+        ArmMovRegOp,
+    ]
+)
